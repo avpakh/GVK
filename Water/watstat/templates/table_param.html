@@ -1,0 +1,213 @@
+{% extends "index_stat.html" %}
+
+{% block content %}
+
+
+<div class="row"> </div>
+   <div class="col-lg-8">
+    <h3 class="page-header">Раздел "Статотчетность водопользователей"   </h3>
+
+
+
+ <div class="row" xmlns="http://www.w3.org/1999/html">
+                <div class="col-lg-10">
+                    <h4 class="page-header">Выборка данных по запросу пользователя: </h4>
+                </div>
+
+
+
+ {%  ifequal val_sel 'no selection' %}
+
+
+          <form role="form"  action="." method="post"> {% csrf_token %}
+              <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" onchange="this.form.submit();" type="radio"  > В разрезе секций по видам эконономической деятельности
+                    <p> </p>
+                  <input name="radioGroup" id="radio2" value="option2" onchange="this.form.submit();" type="radio" > В разрезе видов экономической деятельности по выбранной секции
+                    <p> </p>
+                  </label>
+
+              </div>
+            </form>
+
+  {% endifequal %}
+
+
+  {%  ifequal val_sel 'Selected1' %}
+
+
+              <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > В разрезе секций по видам эконономической деятельности
+                    <p> </p>
+                  </label>
+
+              </div>
+
+
+
+        <form role="form"  action="." method="post"> {% csrf_token %} {{ form }}
+
+            <div class="container">
+
+                  <div class="starter-template">
+                     <input type="text" class="ba-ex2 form-control" name="resultsection" >
+                     <script>
+                           jQuery(document).ready(function($){
+                           var ex3 = $('.ba-ex2').boxautocomplete({
+                           data: {{ dd | safe }},
+                           search: true,
+                           hideInput: true,
+                           valueFormat: 'json',
+                           uniqueValue: true,
+                          searchPlaceholder: "Контекстный поиск по секции ...",
+                           });
+                       });
+                 </script>
+             </div>
+
+
+   {%   if  error == 1 %}
+       <script>
+
+       alert("Ошибка!\nОбъекты по секциям видов ЭД не выбраны из списка!");
+
+</script>
+
+     {% endif %}
+
+
+        <input type="submit"  name="GetParam" value=" Принять выбор по секциям видов ЭД "  onchange="this.form.submit();"/>
+
+
+    </div><!-- /.container -->
+
+</form>
+  {% endifequal %}
+
+   {%  ifequal val_sel 'Selected3' %}
+
+
+      <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  >  В разрезе видов экономической деятельности по выбранной секции
+                    <p> </p>
+                  </label>
+
+
+        <form role="form"  action="." method="post"> {% csrf_token %}
+
+         <ul class="radio"   >
+
+              {% for dd_obj in dd %}
+
+               <li>
+                 {% if dd_obj.checkin != False %}
+                     <input name="chbox_obl3"  checked="" type="checkbox" value={{dd_obj.i_elevel}}  >  {{dd_obj.nai}}
+                  {% else %}
+                     <input name="chbox_obl3"  type="checkbox" value={{dd_obj.i_elevel}} >  {{dd_obj.nai}}
+                 {% endif %}
+                </li>
+
+                 {% endfor %}
+
+          </ul>
+
+
+       </div>
+
+       <input type="submit"  name="GetSection" value="Принять выбор секций по видам ЭД"  onchange="this.form.submit();"/>
+
+
+    </div><!-- /.container -->
+
+</form>
+
+
+  {% endifequal %}
+
+    {%  ifequal val_sel 'error3' %}
+
+
+           <script>
+
+           alert("Ошибка!\nОбъекты административных единиц не выбраны из списка!");
+           javascript:history.go(-1);
+
+           </script>
+
+
+    {% endifequal %}
+
+   {%  ifequal val_sel 'Selectedvid' %}
+
+
+      <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > По видам ЭД (по выбранной секции)
+                    <p> </p>
+                  </label>
+
+
+
+
+        <form role="form"  action="." method="post"> {% csrf_token %} {{ form }}
+
+            <div class="container">
+
+                  <div class="starter-template">
+                     <input type="text" class="ba-ex2 form-control" name="resultvid" >
+                     <script>
+                           jQuery(document).ready(function($){
+                           var ex3 = $('.ba-ex2').boxautocomplete({
+                           data: {{ dd | safe }},
+                           search: true,
+                           hideInput: true,
+                           valueFormat: 'json',
+                           uniqueValue: true,
+                          searchPlaceholder: "Контекстный поиск по выбору вида ЭД .. ",
+                           });
+                       });
+                 </script>
+             </div>
+
+       <input name="button-default"  type="submit"  name="GetParam" value=" Принять выбор видов ЭД "  onchange="this.form.submit();"/>
+
+    </div><!-- /.container -->
+
+
+</form>
+
+{% endifequal %}
+
+   <div class="row" >    </div>
+
+
+
+
+
+
+ </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="/static/js/boxautocomplete.jquery.js"></script>
+
+
+
+                <!-- /.col-lg-12 -->
+
+
+</div>
+
+
+
+{% endblock %}

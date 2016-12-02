@@ -1,0 +1,611 @@
+{% extends "index_db.html" %}
+
+{%  load static %}
+
+{%  block content %}
+
+   {% load render_table from django_tables2 %}
+
+    {% load crispy_forms_tags %}
+
+
+        <link href="{% static 'django_tables2/bootstrap-tables2.css' %}" rel="stylesheet" />
+        <link href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" rel="stylesheet" />
+
+
+    <style>
+
+    .checkbox-grid li {
+    display: block;
+    float: left;
+    width: 50%;
+     }
+    </style>
+
+
+    {%  ifequal tableshow 'no' %}
+
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+                <div class="col-lg-10">
+                    <h4 class="page-header">Выборка данных по запросу пользователя: </h4>
+                </div>
+
+
+     {%  ifequal val_sel 'no selection' %}
+
+            <form role="form"  action="." method="post"> {% csrf_token %}
+              <div class="form-group col-lg-5">
+                  <h4>Вид выборки :</h4>
+
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > Полнотекстовый поиск по разделам (водный объект, природопользователь)
+                      <p> </p>
+                  <input name="radioGroup" id="radio2" value="option2" type="radio" > По инвентарному (учетному) номеру водного объекта
+                    <p> </p>
+                  <input name="radioGroup" id="radio3" value="option3" type="radio" > По видам и целям водопользования
+                    <p> </p>
+                      <button type="submit"  value="Submit" class="btn btn-primary">Принять </button>
+                 </label>
+
+              </div>
+            </form>
+
+     {% endifequal %}
+
+                <!-- /.col-lg-12 -->
+            </div>
+    {%  ifequal val_sel 'option1' %}
+
+            <div class="alert alert-success" role="alert" >
+
+            </div>
+
+            <div class = "row">
+            </div>
+
+
+
+
+
+         <form role="form"  action="." method="post"> {% csrf_token %}
+             <div class="col-lg-10">
+                    <h4 class="page-header"> Выбор по категории водного объекта: </h4>
+
+                  <label class="radio" >
+
+      {%  ifequal val_sel1 'option1_1'  %}
+                   <input name="radioGroup1" id="radio1" value="option1_1" checked="" onclick="this.form.submit();" type="radio"  >  водотоки
+                    <p> </p>
+           {% else %}
+                 <input name="radioGroup1" id="radio1" value="option1_1"  onclick="this.form.submit();" type="radio"  >  водотоки
+                    <p> </p>
+            {% endifequal %}
+
+
+           {%  ifequal val_sel1 'option1_2'  %}
+                  <input name="radioGroup1" id="radio2" value="option1_2"  checked="" onclick="this.form.submit();" type="radio" >  водоемы
+                    <p><head> </p>
+               {% else %}
+                    <input name="radioGroup1" id="radio2" value="option1_2"  onclick="this.form.submit();" type="radio" > водоемы
+                     <p> </p>
+           {% endifequal %}
+
+           {%  ifequal val_sel1 'option1_3'  %}
+                  <input name="radioGroup1" id="radio3" value="option1_3" checked="" onclick="this.form.submit();" type="radio" >  родники
+                    <p> </p>
+                   {% else %}
+                  <input name="radioGroup1" id="radio3" value="option1_3" onclick="this.form.submit();" type="radio" >  родники
+                    <p> </p>
+            {% endifequal %}
+
+                 </label>
+
+             </div>
+
+             </form>
+
+             <div class="row">
+
+             </div>
+
+               <p> </p>
+
+           {%  ifequal val_sel1 'option1_1'  %}
+
+             <h4 class="page-header"> Введите наименование водотока: </h4>
+            <form action="." method="post"> {% csrf_token %}
+                <input list="browsers" name="browser" size="100" autocomplete="off">
+                <datalist id="browsers">
+
+                   {% for namewoz in namewo %}
+                       {% for catwo in arr_catwo %}
+                            {%  ifequal catwo.id_catwo namewoz.id_catwo  %}
+                              <option data-value = " {{ catwo.catwo_name }} | {{ namewoz.inv_name }} | {{ namewoz.raion  }} #{{ namewoz.inv_num }} " value="  {{ catwo.catwo_name }} | {{ namewoz.inv_name }} | {{ namewoz.raion  }} #{{ namewoz.inv_num }} ">
+                            {% endifequal %}
+
+                       {% endfor %}
+                  {% endfor %}
+               </datalist>
+            <button type="submit"  value="Submit" class="btn btn-primary">  Принять </button>
+          </form>
+             {% endifequal %}
+
+
+          {%  ifequal val_sel1 'option1_2'  %}
+
+             <h4 class="page-header"> Введите наименование водоeма: </h4>
+            <form action="." method="post">  {% csrf_token %}
+                <input list="browsers" name="browser" size="100" autocomplete="off">
+                <datalist id="browsers">
+
+                    {% for namewoz in namewo %}
+                       {% for catwo in arr_catwo %}
+                            {%  ifequal catwo.id_catwo namewoz.id_catwo  %}
+                              <option data-value = "{{namewoz.inv_name }}" value="  {{ catwo.catwo_name }} | {{ namewoz.inv_name }} | {{ namewoz.descr_location  }} #{{ namewoz.inv_num }}">
+                            {% endifequal %}
+
+                       {% endfor %}
+                  {% endfor %}
+
+
+               </datalist>
+            <button type="submit"  value="Submit" class="btn btn-primary">Принять </button>
+          </form>
+             {% endifequal %}
+
+            {%  ifequal val_sel1 'option1_3'  %}
+
+             <h4 class="page-header"> Введите наименование родника: </h4>
+            <form action="." method="post"> {% csrf_token %}
+                <input list="browsers" name="browser" size="100" autocomplete="off">
+                <datalist id="browsers">
+
+                 {% for namewoz in namewo %}
+                       {% for catwo in arr_catwo %}
+                            {%  ifequal catwo.id_catwo namewoz.id_catwo  %}
+                              <option data-value = "{{namewoz.inv_name }}" value="  {{ catwo.catwo_name }} | {{ namewoz.inv_name }} | {{  namewoz.descr_location }} #{{ namewoz.inv_num }}">
+                            {% endifequal %}
+
+                       {% endfor %}
+                  {% endfor %}
+
+               </datalist>
+            <button type="submit"  value="Submit" class="btn btn-primary">Принять </button>
+          </form>
+      {% endifequal %}
+
+
+    {% endifequal %}
+
+
+      {%  ifequal val_sel 'option3' %}
+
+
+          <div class="alert alert-success" role="alert" >
+
+            <strong>  Выбор водных объектов по видам и целям водопользования </strong>
+
+            </div>
+
+              <form role="form"  action="." method="post"> {% csrf_token %}
+             <div class="col-lg-10">
+                    <h5 class="page-header"> Выбор поверхностных водных объектов : </h5>
+
+                  <label class="radio" >
+
+
+            {%  ifequal val_sel2 'option3_1'  %}
+                   <input name="radioGroup31" id="radio1" value="option3_1" checked="" onclick="this.form.submit();" type="radio"  >  по целям пользования водными объектами (ст.38 Водного Кодекса РБ)
+                    <p> </p>
+
+
+             {% else %}
+              <input name="radioGroup31" id="radio1" value="option3_1"  onclick="this.form.submit();" type="radio"  > по целям пользования водными объектами (ст.38 Водного Кодекса РБ)
+                <p> </p>
+            {% endifequal %}
+
+
+           {%  ifequal val_sel2 'option3_2'  %}
+                  <input name="radioGroup31" id="radio2" value="option3_2"  checked="" onclick="this.form.submit();" type="radio" >  по видам водопользования
+                    <p> </p>
+               {% else %}
+                    <input name="radioGroup31" id="radio2" value="option3_2"  onclick="this.form.submit();" type="radio" > по видам водопользования
+                     <p> </p>
+           {% endifequal %}
+
+
+
+            </label>
+
+             </div>
+
+                  </form>
+
+          {% endifequal %}
+
+
+         {%  ifequal val_sel2 'option3_1'  %}
+
+             <form action="." method="post">  {% csrf_token %}
+
+            <div class="col-lg-5">
+
+            <h5 class="page-header"> по целям пользования водными объектами (ст.38 Водного Кодекса РБ): </h5>
+            <label class="checkbox" data-multiple="true">
+
+          {% for targetusewob_obj in targetusewo %}
+               <p>
+
+               {% if targetusewob_obj.checkin != False %}
+                 <input name="chbox1"  checked="" type="checkbox" value={{targetusewob_obj.id_targetusewo}} onchange="this.form.submit();" >  {{targetusewob_obj.targetusewo_name}}
+               {% else %}
+                <input name="chbox1"  type="checkbox" value={{targetusewob_obj.id_targetusewo}} onchange="this.form.submit();" >  {{targetusewob_obj.targetusewo_name}}
+               {% endif %}
+              </p>
+
+              {% endfor %}
+
+
+            </label>
+            </div>
+
+             <div class="row">
+
+
+             </div>
+
+              <div class="panel panel-default">
+                   <div class="divider">
+                   </div>
+            </div>
+
+             <div class="col-lg-5">
+
+                 Выбрано: водотоков - {{ res_line }} | водоемов - {{ res_poly }} | родников - {{ res_point }}
+
+             </div>
+
+             <div class="col-lg-3">
+
+             </div>
+
+             <button type="submit" name="GetData" value="Submit"  class="btn btn-primary"> Отобразить </button>
+
+            <p> </p>
+
+             </form>
+
+          {% endifequal %}
+
+
+       {%  ifequal val_sel2 'option3_2'  %}
+
+         <form action="." method="post">  {% csrf_token %}
+
+           <div class="col-lg-6">
+
+              <h5 class="page-header"> по поверхностным водным объектам : </h5>
+
+               <label class="radio" data-multiple="true">
+
+
+               {%  ifequal val_sel3 'use_1'  %}
+               <input name="radio2"  type="radio" value="use_1"  checked="" onchange="this.form.submit();" >   находящихся в обособленном водопользовании
+
+               <p> </p>
+
+               {% else %}
+               <input name="radio2"  type="radio" value="use_1"   onchange="this.form.submit();" >   находящихся в обособленном водопользовании
+
+               <p> </p>
+               {% endifequal %}
+
+
+                {%  ifequal val_sel3 'use_2'  %}
+               <input name="radio2"  type="radio" value="use_2"  checked="" onchange="this.form.submit();" >    представленным в аренду
+
+               <p> </p>
+               {% else %}
+               <input name="radio2"  type="radio" value="use_2"   onchange="this.form.submit();" >    представленным в аренду
+
+               <p> </p>
+               {% endifequal %}
+
+               {%  ifequal val_sel3 'use_3'  %}
+               <input name="radio2"  type="radio" value="use_3"  checked="" onchange="this.form.submit();" >    с утвержденными зонами (места,пляжи) отдыха
+
+               <p> </p>
+               {% else %}
+               <input name="radio2"  type="radio" value="use_3"   onchange="this.form.submit();" >   с утвержденными зонами (места,пляжи) отдыха
+
+               <p> </p>
+               {% endifequal %}
+
+
+            </label>
+
+            </div>
+
+
+                <div class="row"> </div>
+
+
+
+             <div class="panel panel-default">
+                   <div class="divider">
+                   </div>
+
+              <div class="col-lg-10">
+
+               <ul class="checkbox-grid"  data-multiple="true" >
+
+
+             {%  ifequal val_sel3 'use_1'  %}
+              {% for targetobosob_obj in targetobosob %}
+
+               <li>
+                 {% if targetobosob_obj.checkin != False %}
+                     <input name="chbox_1"  checked="" type="checkbox" value={{targetobosob_obj.id_targetobosobwouse}} onchange="this.form.submit();" >  {{targetobosob_obj.targetobosobwouse_name}}
+                  {% else %}
+                     <input name="chbox_1"  type="checkbox" value={{targetobosob_obj.id_targetobosobwouse}} onchange="this.form.submit();" >  {{targetobosob_obj.targetobosobwouse_name}}
+                 {% endif %}
+                </li>
+
+                 {% endfor %}
+
+                </ul>
+
+
+               {% endifequal %}
+
+                  {%  ifequal val_sel3 'use_2'  %}
+              {% for targetarenda_obj in targetarenda %}
+
+               <li>
+                 {% if targetarenda_obj.checkin != False %}
+                     <input name="chbox_2"  checked="" type="checkbox" value={{targetarenda_obj.id_targetarendawo}} onchange="this.form.submit();" >  {{targetarenda_obj.targetarendawo_name}}
+                  {% else %}
+                     <input name="chbox_2"  type="checkbox" value={{targetarenda_obj.id_targetarendawo}} onchange="this.form.submit();" >  {{targetarenda_obj.targetarendawo_name}}
+                 {% endif %}
+                </li>
+
+                 {% endfor %}
+
+                </ul>
+
+
+               {% endifequal %}
+
+
+
+
+              </div>
+              </div>
+
+
+
+
+
+
+             <div class="row">
+
+
+             </div>
+
+            <div class="col-lg-8">
+
+             </div>
+
+            <div class="panel panel-default">
+                   <div class="divider">
+                   </div>
+            </div>
+
+            {% if  res_point != 0 %}
+
+
+            <div class="col-lg-8">
+
+                 Выбрано:  {{ res_point }} водных объекта(ов)
+
+                  </div>
+
+               <div class="col-lg-2">
+
+                 {%  ifequal val_sel3 'use_1'  %}
+
+               <button type="submit" name="GetDat1" value="Submit"  class="btn btn-primary"> Отобразить </button>
+
+                 {% endifequal %}
+
+                  {%  ifequal val_sel3 'use_2'  %}
+
+               <button type="submit" name="GetDat2" value="Submit"  class="btn btn-primary"> Отобразить </button>
+
+                 {% endifequal %}
+
+
+                 {% endif %}
+
+                 </div>
+
+                  </div>
+
+                 </form>
+
+         {% endifequal %}
+   {% if tableav %}
+
+
+
+ <body>
+    <div class=container">
+        <div class="row">
+            <div class="col-sm-10">
+                {% render_table table %}
+            </div>
+</div>
+    </div>
+ </body>
+
+
+   {% endif %}
+
+
+
+     {%  ifequal val_sel 'option2' %}
+
+            <div class="alert alert-success" role="alert" >
+
+            <strong>  Выбор по инвентарному номеру водного объекта </strong>
+
+            </div>
+
+    {% endifequal %}
+
+
+
+
+</div>
+
+</div>
+
+    {% endifequal %}
+
+{% ifequal tableshow 'yes' %}
+
+
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+                <div class="col-lg-10">
+                    <h4 class="page-header">Результаты выборки данных по запросу пользователя: </h4>
+                </div>
+               <!-- /.col-lg-12 -->
+            </div>
+        {%  ifequal val_sel2 'option3_1'  %}
+
+
+            <div class="col-lg-10">
+            <h5 class="header"> по целям пользования водными объектами (ст.38 Водного Кодекса РБ): </h5>
+            <ul class="checkbox-grid"  >
+
+          {% for targetusewob_obj in targetusewo %}
+                <li>
+
+               {% if targetusewob_obj.checkin != False %}
+                 <input name="chbox1"  disabled="" checked="" type="checkbox" value={{targetusewob_obj.id_targetusewo}}  >  {{targetusewob_obj.targetusewo_name}}
+
+               {% endif %}
+              </li>
+
+              {% endfor %}
+
+
+            </ul>
+            </div>
+
+             <div class="row">
+
+
+             </div>
+
+              <div class="panel panel-default">
+                   <div class="divider">
+                   </div>
+            </div>
+
+             <div class="col-lg-5">
+
+                 Выбрано: водотоков - {{ res_line }} | водоемов - {{ res_poly }} | родников - {{ res_point }}
+
+             </div>
+
+             <div class="col-lg-3">
+
+             </div>
+
+
+
+            <p> </p>
+
+
+
+
+          {% endifequal %}
+
+
+          <div class="row">
+
+
+             </div>
+
+            <div class="col-lg-8">
+
+             </div>
+
+            <div class="panel panel-default">
+                   <div class="divider">
+                   </div>
+            </div>
+
+   {% if tableav %}
+
+
+
+ <body>
+    <div class=container">
+        <div class="row">
+            <div class="col-sm-10">
+
+                <div class="panel panel-default">
+                   <div class="divider">
+                   </div>
+
+
+                {% render_table table %}
+
+                <hr/>
+                <form action="/watres/filt/" method="get">
+
+                <p>          </p>
+                <input type="submit" value="Применить фильтры"/>
+                </form>
+
+
+                <div class="panel panel-default">
+                   <div class="divider">
+                   </div>
+            </div>
+
+
+            </div>
+</div>
+    </div>
+ </body>
+
+
+   {% endif %}
+
+
+{% endifequal %}
+
+       <div class="col-lg-12">
+       </div>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="http://code.highcharts.com/highcharts.js" type="text/javascript"></script>
+    <script src="/highcharts.js" type="text/javascript"></script>
+
+  <script src="{%  static "js/exporting.js" %}"></script>
+   <script src="{%  static "js/export-csv.js" %}"></script>
+
+
+<body>
+
+</body>
+
+
+
+
+
+
+{% endblock %}

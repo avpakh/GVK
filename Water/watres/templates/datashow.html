@@ -1,0 +1,144 @@
+{% extends "index_db.html" %}
+
+{%  load static %}
+
+ {% load render_table from django_tables2 %}
+
+{% load crispy_forms_tags %}
+
+{%  block content %}
+
+
+    <head>
+
+        <link href="{% static 'django_tables2/bootstrap-tables2.css' %}" rel="stylesheet" />
+        <link href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" rel="stylesheet" />
+
+    </head>
+
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+    $( document ).ready(function() {
+        $(".wizlink").click(function() {
+            opendialog(this.href, this.title);
+        });
+        $(".wizlink-b").click(function() {
+            opendialog("http://localhost:8000/organisations/person/add", "Person Add Test");
+        });
+
+        function opendialog(page, dialog_title) {
+            var viewportWidth = $(window).width();
+            var viewportHeight = $(window).height();
+
+            var $dialog = $('#somediv')
+            .html('<iframe style="border: 0px; " src="' + page + '" width="100%" height="100%"></iframe>')
+            .dialog({
+                title: dialog_title,
+                autoOpen: false,
+                dialogClass: 'dialog_fixed,ui-widget-header',
+                modal: true,
+                height: viewportHeight * 0.75,
+                minWidth: viewportWidth * 0.75,
+                minHeight: viewportHeight * 0.75,
+                draggable:true
+                /*close: function () { $(this).remove(); },*/
+                /*buttons: { "Ok": function () {         $(this).dialog("close"); } }*/
+            });
+            $dialog.dialog('open');
+            }
+            console.log( "ready!" );
+    });
+
+    </script>
+
+
+
+
+
+     <body>
+
+    </body>
+
+     <style>
+
+    .checkbox-grid li {
+    display: block;
+    float: left;
+    width: 50%;
+     }
+    </style>
+
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+                <div class="col-lg-10">
+                    <h4 class="page-header">Результаты выборки данных по запросу пользователя: </h4>
+                </div>
+               <!-- /.col-lg-12 -->
+            </div>
+
+
+
+
+        <body>
+    <div class=container">
+        <div class="row">
+            <div class="col-sm-8">
+
+               <a  class="wizlink-b" href="#" title="Person Add">add (via div)</a>
+                <hr/>
+                <form action="" method="get">
+                {% crispy filter.form filter.form.helper  %}
+                </form>
+
+
+             </div>
+
+               <div class="row">
+            <div class="col-sm-12">
+            {% render_table table %}
+             </div>
+        </div>
+ </body>
+
+
+
+       <div class="col-lg-12">
+       </div>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+
+   <script src="{%  static "js/exporting.js" %}"></script>
+   <script src="{%  static "js/export-csv.js" %}"></script>
+
+
+<body>
+
+</body>
+
+
+
+
+{% endblock content %}
+
+
+  </head>
+  <body>
+    <div id="somediv">
+      Click me!
+        <a  href="#" title="Add Site">add - NOT THIS ONE</a>
+    </div>
+    <div>
+        <div id="wizlink">
+            <p>Version 5</p>
+            <a  class="wizlink-a" href="http://localhost:8000/organisations/person/add" title="Person Add">add (via anchor)</a>
+            <a  class="wizlink-b" href="#" title="Person Add">add (via div)</a>
+        </div>
+    </div>
+    <div>
+    </div>
+<body>
+
+</body>
+</html>

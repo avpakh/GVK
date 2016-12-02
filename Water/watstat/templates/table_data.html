@@ -1,0 +1,855 @@
+{% extends "index_stat.html" %}
+
+
+{%  load static %}
+
+
+{% load render_table from django_tables2 %}
+
+
+{% block content %}
+
+
+        <link href="{% static 'django_tables2/bootstrap-tables2.css' %}" rel="stylesheet" />
+        <link href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" rel="stylesheet" />
+
+
+     <style>
+
+    .checkbox-grid li {
+    display: block;
+    float: left;
+    width: 50%;}
+       </style>
+
+
+
+
+<div class="row"> </div>
+   <div class="col-lg-8">
+    <h3 class="page-header">Раздел "Статотчетность водопользователей"   </h3>
+
+
+
+ <div class="row" xmlns="http://www.w3.org/1999/html">
+                <div class="col-lg-10">
+                    <h4 class="page-header">Выборка данных по запросу пользователя: </h4>
+                </div>
+
+
+    {%  if error1 == 2 %}
+
+          <script>
+
+           alert("Ошибка!\nОбъекты из групп не выбраны из списка!");
+           javascript:history.go(-1);
+
+           </script>
+
+     {% endif %}
+
+ {%  if param == 1 %}
+
+
+         <div class="form-group col-lg-5">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > В разрезе административных единиц  <p> </p>
+                  </label>
+              </div>
+
+           <div class="container">
+              <div class="row">
+                <div class="col-sm-10">
+
+                   <div class="panel panel-primary">
+                       <div class="panel-heading">
+                        <h3 class="panel-title">Название административных единиц </h3>
+                       </div>
+
+                       {% for basin_obj in basins %}
+                        <div class="panel-title">
+
+                          >>> {{ basin_obj }} <<<
+
+                        </div>
+                       {% endfor %}
+
+                   </div>
+
+               </div>
+
+            </div>
+
+         </div>
+
+        {% if select == 'no' %}
+
+             <form role="form"  action="." method="post"> {% csrf_token %}
+                 <div class="form-group col-lg-10">
+                  <label class="radio"  >
+                        <input name="radioGroupP" id="radio1" value="chall" onchange="this.form.submit();" type="radio"  > По показателям (выбор из списка)
+                    <p> </p>
+                         <input name="radioGroupP" id="radio2" value="chgroup" onchange="this.form.submit();" type="radio" >  По выбору показателей из группы
+                    <p> </p>
+                  </label>
+
+              </div>
+            </form>
+
+          {% endif %}
+
+         {% if select == 'ok1' %}
+
+           <div class="form-group col-lg-10">
+               <label class="radio"  >
+               <input name="radioGroupP" id="radio1" value="chall" checked="" type="radio"  > По показателям (выбор из списка)
+                    <p> </p>
+
+                  </label>
+
+          <form role="form"  action="." method="post"> {% csrf_token %} {{ form }}
+
+               <div class="container">
+
+                  <div class="starter-template">
+                     <input type="text" class="ba-ex2 form-control" name="resultparam1" >
+                     <script>
+                           jQuery(document).ready(function($){
+                           var ex3 = $('.ba-ex2').boxautocomplete({
+                           data: {{ dd | safe }},
+                           search: true,
+                           hideInput: true,
+                           valueFormat: 'json',
+                           uniqueValue: true,
+                          searchPlaceholder: "Контекстный поиск по выбору показателя...",
+                           });
+                       });
+                 </script>
+                 </div>
+            </div>
+
+             {%   if  error == 1 %}
+
+                <script>
+
+                 alert("Ошибка!\n Показатели не выбраны из списка!");
+
+                </script>
+
+                 {% endif %}
+
+
+                 <input type="submit"  name="GetParam" value="Принять выбор показателей "  onchange="this.form.submit();"/>
+
+
+                   </form>
+
+
+
+
+              </div>
+
+
+         {% endif  %}
+
+           {% if select == 'ok2' %}
+
+              <div class="form-group col-lg-10">
+                 <label class="radio"  >
+                  <input name="radioGroupP" id="radio1" value="chall" checked="" type="radio"  >  По выбору показателей из группы
+                    <p> </p>
+
+                  </label>
+
+                   <form role="form"  action="." method="post"> {% csrf_token %} {{ form }}
+
+               <div class="container">
+
+                  <div class="starter-template">
+                     <input type="text" class="ba-ex2 form-control" name="resultgroup" >
+                     <script>
+                           jQuery(document).ready(function($){
+                           var ex3 = $('.ba-ex2').boxautocomplete({
+                           data: {{ dd | safe }},
+                           search: true,
+                           hideInput: true,
+                           valueFormat: 'json',
+                           uniqueValue: true,
+                          searchPlaceholder: "Контекстный поиск по выбору группы...",
+                           });
+                       });
+                 </script>
+                 </div>
+            </div>
+
+             {%   if  error == 1 %}
+
+                <script>
+
+                 alert("Ошибка!\n Группы не выбраны из списка!");
+
+                </script>
+
+                 {% endif %}
+
+
+                 <input type="submit"  name="GetGroup" value="Принять выбор из списка групп "  onchange="this.form.submit();"/>
+
+
+                   </form>
+
+              </div>
+
+
+         {% endif  %}
+
+     {% endif %}
+
+
+
+ {%  ifequal val_sel 'no selection' %}
+
+
+          <form role="form"  action="." method="post"> {% csrf_token %}
+              <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" onchange="this.form.submit();" type="radio"  > В разрезе республики и областей в целом
+                    <p> </p>
+                  <input name="radioGroup" id="radio2" value="option2" onchange="this.form.submit();" type="radio" > В разрезе областей (районы и областные центры)
+                    <p> </p>
+                  <input name="radioGroup" id="radio3" value="option3" onchange="this.form.submit();" type="radio" > По разрезе районов (по выбранной области)
+                    <p> </p>
+                  <input name="radioGroup" id="radio4" value="option4" onchange="this.form.submit();" type="radio" > По областным центрам (по выбранной области)
+                    <p> </p>
+
+                 </label>
+
+              </div>
+            </form>
+
+  {% endifequal %}
+
+
+  {%  ifequal val_sel 'Selected1' %}
+
+
+              <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > В разрезе республики и областей в целом
+                    <p> </p>
+                  </label>
+
+              </div>
+
+
+
+        <form role="form"  action="." method="post"> {% csrf_token %} {{ form }}
+
+            <div class="container">
+
+                  <div class="starter-template">
+                     <input type="text" class="ba-ex2 form-control" name="result1" >
+                     <script>
+                           jQuery(document).ready(function($){
+                           var ex3 = $('.ba-ex2').boxautocomplete({
+                           data: {{ dd | safe }},
+                           search: true,
+                           hideInput: true,
+                           valueFormat: 'json',
+                           uniqueValue: true,
+                          searchPlaceholder: "Контекстный поиск по выбору области...",
+                           });
+                       });
+                 </script>
+             </div>
+
+
+   {%   if  error == 1 %}
+       <script>
+
+       alert("Ошибка!\nОбъекты административных единиц не выбраны из списка!");
+
+</script>
+
+     {% endif %}
+
+
+        <input type="submit"  name="GetParam" value=" Принять выбор административных единиц (областей) "  onchange="this.form.submit();"/>
+
+
+    </div><!-- /.container -->
+
+</form>
+  {% endifequal %}
+
+  {%  ifequal val_sel 'Selected2' %}
+
+
+              <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > В разрезе областей (районы и областные центры)
+                    <p> </p>
+                  </label>
+
+              </div>
+
+
+
+        <form role="form"  action="." method="post"> {% csrf_token %} {{ form }}
+
+            <div class="container">
+
+                  <div class="starter-template">
+                     <input type="text" class="ba-ex2 form-control" name="result2" >
+                     <script>
+                           jQuery(document).ready(function($){
+                           var ex3 = $('.ba-ex2').boxautocomplete({
+                           data: {{ dd | safe }},
+                           search: true,
+                           hideInput: true,
+                           valueFormat: 'json',
+                           uniqueValue: true,
+                          searchPlaceholder: "Контекстный поиск по выбору ...",
+                           });
+                       });
+                 </script>
+             </div>
+
+   {%   if  error == 1 %}
+       <script>
+
+       alert("Ошибка!\nОбъекты административных единиц не выбраны из списка!");
+
+</script>
+
+     {% endif %}
+
+        <input name="button-default"  type="submit"  name="GetParam" value=" Принять выбор административных единиц (районы и/или областные города) "  onchange="this.form.submit();"/>
+
+
+    </div><!-- /.container -->
+
+</form>
+  {% endifequal %}
+
+  {%  ifequal val_sel 'Selected3' %}
+
+
+      <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > По разрезе районов (по выбранной области)
+                    <p> </p>
+                  </label>
+
+
+        <form role="form"  action="." method="post"> {% csrf_token %}
+
+         <ul class="radio"   >
+
+              {% for dd_obj in dd %}
+
+               <li>
+                 {% if dd_obj.checkin != False %}
+                     <input name="chbox_obl3"  checked="" type="radio" value={{dd_obj.i_alevel}}  >  {{dd_obj.name}}
+                  {% else %}
+                     <input name="chbox_obl3"  type="radio" value={{dd_obj.i_alevel}} >  {{dd_obj.name}}
+                 {% endif %}
+                </li>
+
+                 {% endfor %}
+
+          </ul>
+
+
+       </div>
+
+       <input type="submit"  name="GetOblRaion" value="Принять выбор административных единиц (области, г. Минск)"  onchange="this.form.submit();"/>
+
+
+    </div><!-- /.container -->
+
+</form>
+
+
+  {% endifequal %}
+
+    {%  ifequal val_sel 'error3' %}
+
+         <script>
+
+           alert("Ошибка!\nОбъекты административных единиц не выбраны из списка!");
+           javascript:history.go(-1);
+
+         </script>
+
+    {% endifequal %}
+
+      {%  ifequal val_sel 'error4' %}
+
+
+           <script>
+
+           alert("Ошибка!\nОбъекты административных единиц не выбраны из списка!");
+           javascript:history.go(-1);
+
+           </script>
+
+
+    {% endifequal %}
+
+    {%  ifequal val_sel 'Selected4' %}
+
+     <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > По областным центрам (по выбранной области)
+                    <p> </p>
+                  </label>
+
+
+        <form role="form"  action="." method="post"> {% csrf_token %}
+
+         <ul class="radio"   >
+
+              {% for dd_obj in dd %}
+
+               <li>
+                 {% if dd_obj.checkin != False %}
+                     <input name="chbox_obl"  checked="" type="radio" value={{dd_obj.i_alevel}}  >  {{dd_obj.name}}
+                  {% else %}
+                     <input name="chbox_obl"  type="radio" value={{dd_obj.i_alevel}} >  {{dd_obj.name}}
+                 {% endif %}
+                </li>
+
+                 {% endfor %}
+
+          </ul>
+
+
+       </div>
+
+       <input type="submit"  name="GetOblCity" value="Принять выбор административных единиц (области)"  onchange="this.form.submit();"/>
+
+
+    </div><!-- /.container -->
+
+</form>
+
+
+  {% endifequal %}
+
+
+    {%  ifequal val_sel 'Selected3r' %}
+
+      <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > По районам (по выбранной области)
+                    <p> </p>
+                  </label>
+
+        <form role="form"  action="." method="post"> {% csrf_token %} {{ form }}
+
+            <div class="container">
+
+                  <div class="starter-template">
+                     <input type="text" class="ba-ex2 form-control" name="result3select" >
+                     <script>
+                           jQuery(document).ready(function($){
+                           var ex3 = $('.ba-ex2').boxautocomplete({
+                           data: {{ dd | safe }},
+                           search: true,
+                           hideInput: true,
+                           valueFormat: 'json',
+                           uniqueValue: true,
+                          searchPlaceholder: "Контекстный поиск по выбору района ",
+                           });
+                       });
+                 </script>
+             </div>
+
+       <input name="button-default"  type="submit"  name="GetParam" value=" Принять выбор административных единиц (районы) "  onchange="this.form.submit();"/>
+
+    </div><!-- /.container -->
+
+
+</form>
+
+{% endifequal %}
+
+     {%  ifequal val_sel 'Selected4r' %}
+
+
+      <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > По разрезе районов (по выбранной области)
+                    <p> </p>
+                  </label>
+
+
+        <form role="form"  action="." method="post"> {% csrf_token %} {{ form }}
+
+            <div class="container">
+
+                  <div class="starter-template">
+                     <input type="text" class="ba-ex2 form-control" name="result4select" >
+                     <script>
+                           jQuery(document).ready(function($){
+                           var ex3 = $('.ba-ex2').boxautocomplete({
+                           data: {{ dd | safe }},
+                           search: true,
+                           hideInput: true,
+                           valueFormat: 'json',
+                           uniqueValue: true,
+                          searchPlaceholder: "Контекстный поиск по выбору города областного уровня",
+                           });
+                       });
+                 </script>
+             </div>
+
+       <input  type="submit"  name="GetOblCityr" value=" Принять выбор административных единиц (областн. город) "  onchange="this.form.submit();"/>
+
+    </div><!-- /.container -->
+
+</form>
+
+{% endifequal %}
+
+
+   {%  ifequal val_sel 'error' %}
+
+       <script>
+
+          alert("Ошибка!\nОбъекты административных единиц не выбраны из списка!");
+
+       </script>
+
+
+      <div class="form-group col-lg-10">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  > По разрезе районов (по выбранной области)
+                    <p> </p>
+                  </label>
+
+
+        <form role="form"  action="." method="post"> {% csrf_token %}
+
+         <ul class="checkbox-grid"  data-multiple="true" >
+
+              {% for dd_obj in dd %}
+
+               <li>
+                 {% if dd_obj.checkin != False %}
+                     <input name="chbox_obl"  checked="" type="radio" value={{dd_obj.i_alevel}}  >  {{dd_obj.name}}
+                  {% else %}
+                     <input name="chbox_obl"  type="radio" value={{dd_obj.i_alevel}} >  {{dd_obj.name}}
+                 {% endif %}
+                </li>
+
+                 {% endfor %}
+
+          </ul>
+
+
+       </div>
+
+       <input type="submit"  name="GetOblRaion" value="Принять выбор административных единиц (области, г. Минск)"  onchange="this.form.submit();"/>
+
+    </div><!-- /.container -->
+
+</form>
+
+ {% endifequal %}
+
+      {%  if param == 5 %}
+
+          <div class="form-group col-lg-5">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  >  В разрезе административных единиц  <p> </p>
+                  </label>
+              </div>
+
+         <div class="container">
+            <div class="row">
+               <div class="col-sm-10">
+
+                   <div class="panel panel-primary">
+                       <div class="panel-heading">
+                        <h3 class="panel-title">  Название административных единиц  </h3>
+                       </div>
+
+                       {% for basin_obj in basins %}
+                        <div class="panel-title">
+
+                          > {{ basin_obj }} <
+
+                        </div>
+                       {% endfor %}
+
+                   </div>
+
+         <div class="form-group col-lg-10">
+                 <label class="radio"  >
+                  <input name="radioGroupP" id="radio1" value="chall" checked="" type="radio"  >  По выбору показателей из группы
+                    <p> </p>
+                  </label>
+
+
+            <div class="panel panel-primary">
+                       <div class="panel-heading">
+                        <h3 class="panel-title"> Название выбранных групп</h3>
+                       </div>
+
+                       {% for group_obj in groups %}
+                        <div class="panel-title">
+
+                          >> {{ group_obj }} <<
+
+                        </div>
+                       {% endfor %}
+
+                   </div>
+
+            <form role="form"  action="." method="post"> {% csrf_token %} {{ form }}
+
+               <div class="container">
+
+                  <div class="starter-template">
+                     <input type="text" class="ba-ex2 form-control" name="resultparam1" >
+                     <script>
+                           jQuery(document).ready(function($){
+                           var ex3 = $('.ba-ex2').boxautocomplete({
+                           data: {{ dd | safe }},
+                           search: true,
+                           hideInput: true,
+                           valueFormat: 'json',
+                           uniqueValue: true,
+                          searchPlaceholder: "Контекстный поиск по выбору показателя...",
+                           });
+                       });
+                 </script>
+                 </div>
+            </div>
+
+              {%   if  error == 1 %}
+
+                <script>
+
+                 alert("Ошибка!\n Показатели не выбраны из списка!");
+
+                </script>
+
+                 {% endif %}
+
+
+                 <input type="submit"  name="GetParam" value="Принять выбор показателей "  onchange="this.form.submit();"/>
+
+
+                 </form>
+
+
+
+           </div>
+
+          </div>
+
+       </div>
+
+       {% endif  %}
+
+
+
+
+
+   {%  if param == 2 %}
+
+         <div class="form-group col-lg-5">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  >   В разрезе административных единиц <p> </p>
+                  </label>
+              </div>
+
+         <div class="container">
+            <div class="row">
+               <div class="col-sm-10">
+
+                   <div class="panel panel-primary">
+                       <div class="panel-heading">
+                        <h3 class="panel-title">Название  административных единиц </h3>
+                       </div>
+
+                       {% for basin_obj in basins %}
+                        <div class="panel-title">
+
+                          >> {{ basin_obj }}
+
+                        </div>
+                       {% endfor %}
+
+                   </div>
+
+                    <div class="panel panel-primary">
+                       <div class="panel-heading">
+                        <h3 class="panel-title">Выбранные показатели</h3>
+                       </div>
+
+                       {% for param_obj in params %}
+                        <div class="panel-title">
+
+                          >>> {{ param_obj }}
+
+                        </div>
+                       {% endfor %}
+
+                   </div>
+
+                   <div class="panel panel-primary">
+                       <div class="panel-heading">
+                        <h3 class="panel-title">Выбор временного интервала</h3>
+                       </div>
+
+                      <form role="form"  action="." method="post"> {% csrf_token %}
+                          <div class="form-group col-lg-10">
+
+                        <p>Введите начало периода:
+                          <input type="year" name="year1"  min="2000" max="2015" value="2000" >
+
+                        Введите окончание периода
+                          <input type="year" name="year2"  min="2000" max="2015"  value="2015">
+
+
+                           <p>   <input type="submit" name = "GetYears" value="Принять"></p>
+
+                          </div>
+                    </form>
+
+
+                   </div>
+
+
+
+
+               </div>
+
+            </div>
+
+       </div>
+
+      </div>
+
+
+   {% endif %}
+
+
+   {% if param == 3  %}
+
+             <div class="form-group col-lg-5">
+                  <h4>Вид выборки :</h4>
+                  <label class="radio"  >
+                  <input name="radioGroup" id="radio1" value="option1" checked="" type="radio"  >  В разрезе административных единиц <p> </p>
+                  </label>
+              </div>
+
+         <div class="container">
+            <div class="row">
+               <div class="col-sm-10">
+
+                       <div class="panel panel-primary">
+                          <div class="panel-heading">
+                             <h3 class="panel-title"> Название административных единиц </h3>
+                         </div>
+
+                          {% for basin_obj in basins %}
+                           <div class="panel-title">
+
+                              >> {{ basin_obj }}
+
+                            </div>
+                           {% endfor %}
+
+                       </div>
+
+                       <div class="panel panel-primary">
+                           <div class="panel-heading">
+                              <h3 class="panel-title">Выбранные показатели</h3>
+                          </div>
+
+                       {% for param_obj in params %}
+                            <div class="panel-title">
+
+                                >>> {{ param_obj }}
+
+                            </div>
+                         {% endfor %}
+
+                      </div>
+
+                   <div class="panel panel-primary">
+                       <div class="panel-heading">
+                        <h3 class="panel-title">Выбор временного интервала</h3>
+                       </div>
+
+
+                         <div class="form-group col-lg-10">
+
+                        <p>Начало периода:
+                          <input type="year" name="year1"  min="2000" max="2015" value="2000" >
+
+                          Окончание периода
+                          <input type="year" name="year2"  min="2000" max="2015"  value="2015">
+
+                          </div>
+
+                    </div>
+               </div>
+
+                           {% render_table  tab1  %}
+
+            </div>
+
+       </div>
+
+   {% endif %}
+
+
+    </div>
+
+
+  </div>
+
+
+    <div class="row" >    </div>
+
+
+
+
+
+
+ </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="/static/js/boxautocomplete.jquery.js"></script>
+
+
+
+                <!-- /.col-lg-12 -->
+
+
+</div>
+
+
+
+{% endblock %}

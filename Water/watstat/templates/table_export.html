@@ -1,0 +1,49 @@
+{% extends "index_stat.html" %}
+
+{%  load static %}
+
+
+{% load render_table from django_tables2 %}
+
+
+{% block content %}
+
+
+        <link href="{% static 'django_tables2/bootstrap-tables2.css' %}" rel="stylesheet" />
+        <link href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" rel="stylesheet" />
+
+
+     <style>
+
+    .checkbox-grid li {
+    display: block;
+    float: left;
+    width: 50%;}
+       </style>
+
+   <div class="col-lg-8">
+    <h3 class="page-header">Раздел "Статотчетность водопользователей"   </h3>
+ <div class="row" xmlns="http://www.w3.org/1999/html">
+                <div class="col-lg-10">
+                    <h4 class="page-header">Экспорт данных : </h4>
+                </div>
+
+
+                       {% render_table  tab  %}
+
+
+
+
+
+  <div class="row" >  </div>
+
+   <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="/static/js/boxautocomplete.jquery.js"></script>
+
+                <!-- /.col-lg-12 -->
+
+
+{% endblock %}
